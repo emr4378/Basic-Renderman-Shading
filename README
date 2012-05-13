@@ -1,0 +1,74 @@
+Renderman Assignment
+
+Eduardo Rodrigues - emr4378
+
+------------------
+------------------
+My Shaders
+------------------
+
+EdDisplacement	- generates terrain on a surface
+EdSurface		- colors terrain on a surface (given it's height values)
+EdLensFlare		- generic lens flare class; copied from source below.
+EdPhong			- basic Phong shading shader, used for moon
+RManNotes		- filled with helpful stuffs, pulled from source below.
+
+
+------------------
+------------------
+Renderman-1.tiff 
+------------------
+The first assignment; a new image created by modifying instance variables in 
+the code I was given.
+
+
+------------------
+------------------
+Renderman-2a.tiff
+------------------
+The first part of the second assignment; a new image created by applying three
+new shaders to the surfaces in the scene.
+
+Sphere shader source: 	
+http://www.renderman.org/RMR/Shaders/JMShaders/index.html#JMredapple
+
+Wall shader source: 	
+http://www.renderman.org/RMR/Shaders/JMShaders/index.html#JMlunette
+
+Floor shader source:	
+http://www.renderman.org/RMR/Shaders/MRShaders/index.html
+
+
+------------------
+------------------
+Renderman-2b.tiff
+------------------
+The second part of the second assignment; shows the results of changing some 
+parameters of the shaders.
+
+I basically made the sphere/apple greener and a bit rougher, changed the 
+colors and tile widths of the wall texture, and changed the recursion depth for
+the floor texture (Mandlebrot).
+
+
+------------------
+------------------
+Renderman-3.tiff
+------------------
+The third assignment; a completely new image, using shaders of my own creation 
+and shaders I found.
+
+Generic resources:
+http://accad.osu.edu/~smay/RManNotes/
+http://books.google.com/books?id=6_4VaJiOx7EC
+
+Lens Flare Shader:
+http://www.larrygritz.com/arman/materials.html
+
+Inspiration for my terrain generation shaders:
+http://www.renderman.org/RMR/Shaders/TLShaders/index.html#TLTerranNwhite
+
+
+I wanted to have a sweet-ass nebula cloud thing going on in the background, but
+for whatever reason clouds will not render on my computer (copied the example
+code from Advanced Renderman book and it still wouldn't work). Oh well.

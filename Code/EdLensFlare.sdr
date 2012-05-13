@@ -1,0 +1,449 @@
+#!version 2.2.5
+surface
+#!parameters:
+uniform	float	intensity	=	1.0
+uniform	float	bloomintensity	=	1
+uniform	float	bloomradius	=	0.5
+uniform	float	bloomstarry	=	0.75
+uniform	float	bloomnpoints	=	25
+uniform	float	bloomfalloff	=	8
+uniform	float	starburstintensity	=	0.075
+uniform	float	starburstradius	=	0.5
+uniform	float	starburstnpoints	=	100
+uniform	float	starburstfalloff	=	3
+uniform	float	rainbowintensity	=	0.03
+uniform	float	rainbowradius	=	0.5
+uniform	float	rainbowwidth	=	0.2
+uniform	float	nspots	=	50
+uniform	float	disky	=	3
+uniform	float	ringy	=	1
+uniform	float	blotty	=	1
+uniform	float	bloony	=	1
+uniform	float	spotintensity	=	0.08
+uniform	float	spotvarycolor	=	0.5
+uniform	float	seed	=	143
+#!variables:
+uniform	float	nrand
+uniform	float	aspect
+uniform	float	lensfov
+varying	vector	Pndc
+varying	float	dPndc
+uniform	vector	temporary_0
+uniform	float	temporary_1
+uniform	vector	Pcorner0
+uniform	vector	Pcorner1
+uniform	float	temporary_2
+uniform	float	temporary_3
+uniform	float	temporary_4
+uniform	float	temporary_5
+uniform	vector	corner
+uniform	float	halfangle
+uniform	vector	temporary_6
+varying	vector	temporary_7
+varying	vector	temporary_8
+varying	vector	temporary_9
+varying	float	temporary_10
+varying	float	temporary_11
+varying	float	atten
+varying	float	brightness
+varying	vector	Cflare
+varying	vector	Plight
+varying	vector	Lvec
+varying	float	angle
+varying	float	dist
+varying	vector	axis
+uniform	float	i
+varying	vector	temporary_12
+varying	float	temporary_13
+varying	float	temporary_14
+varying	float	temporary_15
+varying	float	temporary_16
+varying	float	temporary_17
+varying	float	temporary_18
+varying	float	radius
+varying	float	bloom
+varying	float	radius_1
+varying	float	star
+varying	vector	temporary_19
+varying	float	x0
+varying	float	x1
+varying	float	temporary_20
+varying	float	temporary_21
+varying	float	temporary_22
+varying	float	temporary_23
+varying	vector	temporary_24
+varying	vector	temporary_25
+varying	vector	temporary_26
+varying	vector	temporary_27
+varying	vector	temporary_28
+varying	vector	temporary_29
+varying	vector	temporary_30
+varying	vector	temporary_31
+varying	vector	temporary_32
+varying	vector	temporary_33
+uniform	float	alongaxis
+varying	vector	cntr
+varying	float	axisdist
+varying	float	radius_2
+varying	vector	clr
+varying	float	bright
+uniform	float	alltypes
+uniform	float	type
+varying	float	int
+uniform	vector	temporary_34
+uniform	vector	temporary_35
+uniform	vector	temporary_36
+uniform	vector	temporary_37
+uniform	vector	temporary_38
+#!Init:
+	return            
+#!Code:
+	moveff            	nrand 0
+	vfromf            	temporary_0 0
+	vuvector           Ci temporary_0
+	vfromf            	temporary_0 0
+	vuvector           Oi temporary_0
+	vfromf            	temporary_0 0 0 0
+	transform	("p=SSp")  Pcorner0  "NDC"  "screen"  temporary_0 
+	vfromf            	temporary_0 1 1 0
+	transform	("p=SSp")  Pcorner1  "NDC"  "screen"  temporary_0 
+	xcomp	("f=p")  temporary_3  Pcorner1 
+	xcomp	("f=p")  temporary_4  Pcorner0 
+	subff             	temporary_2 temporary_3 temporary_4
+	ycomp	("f=p")  temporary_4  Pcorner1 
+	ycomp	("f=p")  temporary_5  Pcorner0 
+	subff             	temporary_3 temporary_4 temporary_5
+	divff             	temporary_1 temporary_2 temporary_3
+	abs	("f=f")  aspect  temporary_1 
+	vfromf            	temporary_0 1 1 0
+	transform	("p=SSp")  corner  "NDC"  "camera"  temporary_0 
+	normalize	("v=v")  temporary_0  corner 
+	vfromf            	temporary_6 0 0 1
+	dot               	temporary_1 temporary_0 temporary_6
+	acos	("f=f")  halfangle  temporary_1 
+	mulff             	lensfov 2 halfangle
+	transform	("p=Sp")  temporary_8  "NDC"  P 
+	vfromf            	temporary_0 .5 .5 0
+	vuvector           temporary_9 temporary_0
+	subvv             	temporary_7 temporary_8 temporary_9
+	vfromf            	temporary_0 2
+	vuvector           temporary_8 temporary_0
+	mulvv             	Pndc temporary_7 temporary_8
+	vfromf            	temporary_0 aspect 1 0
+	vuvector           temporary_7 temporary_0
+	mulvv             	Pndc Pndc temporary_7
+	area	("f=p")  temporary_11  Pndc 
+	sqrt	("f=f")  temporary_10  temporary_11 
+	vufloat            temporary_11 1.0e-6
+	max	("f=ff")  dPndc  temporary_10  temporary_11 
+	vfromf            	temporary_6 0 0 1
+	vfrom             	temporary_0 "camera" temporary_6
+	vuvector           temporary_7 temporary_0
+	divff             	temporary_1 3.141592654 2
+	vufloat            temporary_10 temporary_1
+	illuminance       	 P  temporary_7  temporary_10  #!Label18 #!Label19
+#!Label18:
+	addvv             	temporary_12 P L
+	transform	("p=Sp")  temporary_9  "camera"  temporary_12 
+	normalize	("v=v")  temporary_8  temporary_9 
+	zcomp	("f=p")  temporary_11  temporary_8 
+	acos	("f=f")  atten  temporary_11 
+	vufloat            temporary_11 1
+	vufloat            temporary_14 1
+	vufloat            temporary_15 2
+	abs	("f=f")  temporary_17  atten 
+	divff             	temporary_1 lensfov 2
+	vufloat            temporary_18 temporary_1
+	divff             	temporary_16 temporary_17 temporary_18
+	smoothstep	("f=fff")  temporary_13  temporary_14  temporary_15  temporary_16 
+	subff             	atten temporary_11 temporary_13
+	vufloat            temporary_14 intensity
+	mulff             	temporary_13 atten temporary_14
+	vufloat            temporary_17 0
+	comp	("f=cf")  temporary_16  Cl  temporary_17 
+	vufloat            temporary_18 1
+	comp	("f=cf")  temporary_17  Cl  temporary_18 
+	addff             	temporary_15 temporary_16 temporary_17
+	vufloat            temporary_17 2
+	comp	("f=cf")  temporary_16  Cl  temporary_17 
+	addff             	temporary_14 temporary_15 temporary_16
+	mulff             	temporary_11 temporary_13 temporary_14
+	vufloat            temporary_13 3
+	divff             	brightness temporary_11 temporary_13
+	vfromf            	temporary_0 0
+	vuvector           Cflare temporary_0
+	moveff            	nrand 0
+	addvv             	temporary_12 P L
+	transform	("p=Sp")  temporary_9  "NDC"  temporary_12 
+	vfromf            	temporary_0 .5 .5 0
+	vuvector           temporary_12 temporary_0
+	subvv             	temporary_8 temporary_9 temporary_12
+	vfromf            	temporary_0 2
+	vuvector           temporary_9 temporary_0
+	mulvv             	Plight temporary_8 temporary_9
+	vfromf            	temporary_0 aspect 1 0
+	vuvector           temporary_8 temporary_0
+	mulvv             	Plight Plight temporary_8
+	subvv             	Lvec Plight Pndc
+	ycomp	("f=p")  temporary_13  Lvec 
+	xcomp	("f=p")  temporary_14  Lvec 
+	atan	("f=ff")  temporary_11  temporary_13  temporary_14 
+	vufloat            temporary_13 3.141592654
+	addff             	angle temporary_11 temporary_13
+	length	("f=v")  dist  Lvec 
+	fgt               	temporary_1 bloomintensity 0
+	vufloat            temporary_11 temporary_1
+	if                	temporary_11 #!Label20
+	sqrt	("f=f")  temporary_14  brightness 
+	vufloat            temporary_15 5
+	mulff             	temporary_13 temporary_14 temporary_15
+	addff             	nrand nrand 1
+	cellnoise	("f=ff")  temporary_2  nrand  seed 
+	mix	("f=fff")  temporary_1  .2  bloomradius  temporary_2 
+	vufloat            temporary_14 temporary_1
+	mulff             	radius temporary_13 temporary_14
+	vufloat            temporary_15 bloomnpoints
+	mulff             	temporary_14 temporary_15 angle
+	mulff             	temporary_1 2 3.141592654
+	vufloat            temporary_15 temporary_1
+	divff             	temporary_13 temporary_14 temporary_15
+	vufloat            temporary_14 bloomnpoints
+	pnoise	("f=ff")  bloom  temporary_13  temporary_14 
+	vufloat            temporary_13 0.5
+	vufloat            temporary_14 bloomstarry
+	mix	("f=fff")  bloom  temporary_13  bloom  temporary_14 
+	vufloat            temporary_13 1
+	vufloat            temporary_15 0
+	vufloat            temporary_16 0.5
+	divff             	temporary_17 dist radius
+	smoothstep	("f=fff")  temporary_14  temporary_15  temporary_16  temporary_17 
+	mix	("f=fff")  bloom  temporary_13  bloom  temporary_14 
+	vufloat            temporary_14 1
+	vufloat            temporary_16 0.0
+	mulff             	temporary_17 radius bloom
+	smoothstep	("f=fff")  temporary_15  temporary_16  temporary_17  dist 
+	subff             	temporary_13 temporary_14 temporary_15
+	vufloat            temporary_14 bloomfalloff
+	pow	("f=ff")  bloom  temporary_13  temporary_14 
+	divff             	temporary_1 bloomintensity intensity
+	vufloat            temporary_15 temporary_1
+	mulff             	temporary_14 bloom temporary_15
+	divff             	temporary_13 temporary_14 brightness
+	vfromf            	temporary_8 temporary_13
+	addvv             	Cflare Cflare temporary_8
+#!Label20:
+	endif             
+	fgt               	temporary_1 starburstintensity 0
+	vufloat            temporary_11 temporary_1
+	if                	temporary_11 #!Label22
+	sqrt	("f=f")  temporary_14  brightness 
+	vufloat            temporary_15 5
+	mulff             	temporary_13 temporary_14 temporary_15
+	addff             	nrand nrand 1
+	cellnoise	("f=ff")  temporary_2  nrand  seed 
+	mix	("f=fff")  temporary_1  .2  starburstradius  temporary_2 
+	vufloat            temporary_14 temporary_1
+	mulff             	radius_1 temporary_13 temporary_14
+	vufloat            temporary_15 starburstnpoints
+	mulff             	temporary_14 temporary_15 angle
+	mulff             	temporary_1 2 3.141592654
+	vufloat            temporary_15 temporary_1
+	divff             	temporary_13 temporary_14 temporary_15
+	vufloat            temporary_14 starburstnpoints
+	pnoise	("f=ff")  star  temporary_13  temporary_14 
+	vufloat            temporary_14 1
+	vufloat            temporary_16 0.0
+	mulff             	temporary_17 radius_1 star
+	smoothstep	("f=fff")  temporary_15  temporary_16  temporary_17  dist 
+	subff             	temporary_13 temporary_14 temporary_15
+	vufloat            temporary_14 starburstfalloff
+	pow	("f=ff")  star  temporary_13  temporary_14 
+	divff             	temporary_1 starburstintensity intensity
+	vufloat            temporary_15 temporary_1
+	mulff             	temporary_14 star temporary_15
+	divff             	temporary_13 temporary_14 brightness
+	vfromf            	temporary_8 temporary_13
+	addvv             	Cflare Cflare temporary_8
+#!Label22:
+	endif             
+	fgt               	temporary_1 rainbowintensity 0
+	vufloat            temporary_11 temporary_1
+	if                	temporary_11 #!Label24
+	divff             	temporary_1 rainbowintensity intensity
+	vufloat            temporary_14 temporary_1
+	mulff             	temporary_13 brightness temporary_14
+	vfromf            	temporary_9 temporary_13
+	vufloat            temporary_16 rainbowradius
+	divff             	temporary_15 dist temporary_16
+	vufloat            temporary_16 1
+	subff             	temporary_14 temporary_15 temporary_16
+	vufloat            temporary_15 rainbowwidth
+	divff             	temporary_13 temporary_14 temporary_15
+	vufloat            temporary_16 rainbowradius
+	divff             	temporary_15 dPndc temporary_16
+	vufloat            temporary_16 rainbowwidth
+	divff             	temporary_14 temporary_15 temporary_16
+	vufloat            temporary_16 0
+	vufloat            temporary_17 1
+	vufloat            temporary_20 2
+	divff             	temporary_18 temporary_14 temporary_20
+	subff             	x0 temporary_13 temporary_18
+	addff             	x1 x0 temporary_14
+	vufloat            temporary_18 0
+	min	("f=ff")  temporary_22  x1  temporary_17 
+	max	("f=ff")  temporary_23  x0  temporary_16 
+	subff             	temporary_21 temporary_22 temporary_23
+	divff             	temporary_20 temporary_21 temporary_14
+	max	("f=ff")  temporary_15  temporary_18  temporary_20 
+	vfromf            	temporary_19 temporary_15
+	vfromf            	temporary_0 0.5 0 0.5
+	vuvector           temporary_25 temporary_0
+	vfromf            	temporary_0 0.5 0 0.5
+	vuvector           temporary_26 temporary_0
+	vfromf            	temporary_0 .375 0 0.75
+	vuvector           temporary_27 temporary_0
+	vfromf            	temporary_0 0 0 1
+	vuvector           temporary_28 temporary_0
+	vfromf            	temporary_0 0 1 0
+	vuvector           temporary_29 temporary_0
+	vfromf            	temporary_0 1 1 0
+	vuvector           temporary_30 temporary_0
+	vfromf            	temporary_0 1 .5 0
+	vuvector           temporary_31 temporary_0
+	vfromf            	temporary_0 1 0 0
+	vuvector           temporary_32 temporary_0
+	vfromf            	temporary_0 1 0 0
+	vuvector           temporary_33 temporary_0
+	spline	("c=fccccccccc")  temporary_24  temporary_13  temporary_25  temporary_26  temporary_27  temporary_28  temporary_29  temporary_30  temporary_31  temporary_32  temporary_33 
+	mulvv             	temporary_12 temporary_19 temporary_24
+	mulvv             	temporary_8 temporary_9 temporary_12
+	addvv             	Cflare Cflare temporary_8
+#!Label24:
+	endif             
+	normalize	("v=v")  axis  Plight 
+	moveff            	nrand 20
+	moveff            	i 0
+	forbegin          	#!Label26 #!Label27 #!Label28
+#!Label26:
+	flt               	temporary_1 i nspots
+	vufloat            temporary_11 temporary_1
+	for               	temporary_11
+	addff             	nrand nrand 1
+	cellnoise	("f=ff")  alongaxis  nrand  seed 
+	negf              	temporary_2 1.7
+	mix	("f=fff")  temporary_1  temporary_2  1.7  alongaxis 
+	vfromf            	temporary_0 temporary_1
+	vuvector           temporary_8 temporary_0
+	mulvv             	cntr temporary_8 axis
+	distance	("f=pp")  axisdist  cntr  Pndc 
+	addff             	nrand nrand 1
+	cellnoise	("f=ff")  temporary_3  nrand  seed 
+	pow	("f=ff")  temporary_2  temporary_3  2 
+	mix	("f=fff")  temporary_1  0.04  .1  temporary_2 
+	vufloat            temporary_11 temporary_1
+	distance	("f=pp")  temporary_13  cntr  Plight 
+	mulff             	radius_2 temporary_11 temporary_13
+	movevv            	clr Cl
+	vfromf            	temporary_6 1
+	vfromf            	temporary_35 spotvarycolor
+	cellnoise	("c=f")  temporary_37  i 
+	vfromf            	temporary_38 0.5
+	subvv             	temporary_36 temporary_37 temporary_38
+	mulvv             	temporary_34 temporary_35 temporary_36
+	addvv             	temporary_0 temporary_6 temporary_34
+	vuvector           temporary_8 temporary_0
+	mulvv             	clr clr temporary_8
+	vufloat            temporary_11 1
+	vufloat            temporary_14 2
+	mulff             	temporary_13 temporary_14 radius_2
+	subff             	bright temporary_11 temporary_13
+	mulff             	bright bright bright
+	addff             	temporary_2 disky ringy
+	addff             	temporary_1 temporary_2 blotty
+	addff             	alltypes temporary_1 bloony
+	addff             	nrand nrand 1
+	cellnoise	("f=ff")  temporary_1  nrand  seed 
+	mulff             	type temporary_1 alltypes
+	vufloat            int 0
+	flt               	temporary_1 type disky
+	vufloat            temporary_11 temporary_1
+	if                	temporary_11 #!Label30
+	vufloat            temporary_13 1
+	vufloat            temporary_17 2
+	divff             	temporary_16 dPndc temporary_17
+	subff             	temporary_15 axisdist temporary_16
+	vufloat            temporary_18 2
+	divff             	temporary_17 dPndc temporary_18
+	addff             	temporary_16 axisdist temporary_17
+	filterstep	("f=fff")  temporary_14  radius_2  temporary_15  temporary_16 
+	subff             	int temporary_13 temporary_14
+#!Label30:
+	else              	#!Label29
+	addff             	temporary_2 disky ringy
+	flt               	temporary_1 type temporary_2
+	vufloat            temporary_13 temporary_1
+	if                	temporary_13 #!Label32
+	vufloat            temporary_16 0.05
+	mulff             	temporary_15 temporary_16 axisdist
+	addff             	temporary_14 radius_2 temporary_15
+	vufloat            temporary_16 2
+	divff             	temporary_15 dPndc temporary_16
+	subff             	x0 axisdist temporary_15
+	addff             	x1 x0 dPndc
+	vufloat            temporary_15 0
+	min	("f=ff")  temporary_18  x1  temporary_14 
+	max	("f=ff")  temporary_20  x0  radius_2 
+	subff             	temporary_17 temporary_18 temporary_20
+	divff             	temporary_16 temporary_17 dPndc
+	max	("f=ff")  int  temporary_15  temporary_16 
+#!Label32:
+	else              	#!Label31
+	addff             	temporary_3 disky ringy
+	addff             	temporary_2 temporary_3 blotty
+	flt               	temporary_1 type temporary_2
+	vufloat            temporary_14 temporary_1
+	if                	temporary_14 #!Label34
+	vufloat            temporary_15 1
+	vufloat            temporary_17 0
+	smoothstep	("f=fff")  temporary_16  temporary_17  radius_2  axisdist 
+	subff             	int temporary_15 temporary_16
+#!Label34:
+	else              	#!Label33
+	vufloat            temporary_16 0
+	smoothstep	("f=fff")  temporary_15  temporary_16  radius_2  axisdist 
+	vufloat            temporary_20 2
+	divff             	temporary_18 dPndc temporary_20
+	subff             	temporary_17 axisdist temporary_18
+	vufloat            temporary_21 2
+	divff             	temporary_20 dPndc temporary_21
+	addff             	temporary_18 axisdist temporary_20
+	filterstep	("f=fff")  temporary_16  radius_2  temporary_17  temporary_18 
+	subff             	int temporary_15 temporary_16
+#!Label33:
+	endif             
+#!Label31:
+	endif             
+#!Label29:
+	endif             
+	vufloat            temporary_13 spotintensity
+	mulff             	temporary_11 temporary_13 bright
+	vfromf            	temporary_19 temporary_11
+	mulvv             	temporary_12 temporary_19 clr
+	mulvv             	temporary_9 temporary_12 Cs
+	vfromf            	temporary_12 int
+	mulvv             	temporary_8 temporary_9 temporary_12
+	addvv             	Cflare Cflare temporary_8
+#!Label27:
+	addff             	i i 1
+#!Label28:
+	forend            
+	mulvv             	temporary_9 Cflare Cl
+	vfromf            	temporary_12 atten
+	mulvv             	temporary_8 temporary_9 temporary_12
+	addvv             	Ci Ci temporary_8
+#!Label19:
+	endilluminance    
+	vfromf            	temporary_0 intensity
+	vuvector           temporary_7 temporary_0
+	mulvv             	Ci Ci temporary_7
+	return            

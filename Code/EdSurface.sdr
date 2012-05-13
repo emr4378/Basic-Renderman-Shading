@@ -1,0 +1,154 @@
+#!version 2.2.5
+surface
+#!parameters:
+uniform	float	Ka	=	0.8
+uniform	float	Kd	=	0.7
+uniform	float	roughness	=	0.1
+uniform	color	specularcolor	=	1
+uniform	float	Km	=	.02
+uniform	float	seed	=	0
+uniform	float	iter	=	5
+uniform	float	seaLevel	=	0
+#!variables:
+varying	vector	surface_color
+varying	vector	layer_color
+varying	vector	surface_opac
+varying	vector	layer_opac
+varying	float	surface_mag
+varying	float	layer_mag
+varying	vector	PP
+varying	vector	Nf
+varying	vector	V
+varying	float	s_1
+varying	float	scale
+varying	float	rough
+varying	float	i
+varying	vector	temporary_0
+uniform	vector	temporary_1
+varying	float	temporary_2
+varying	float	temporary_3
+varying	float	temporary_4
+varying	float	temporary_5
+varying	vector	temporary_6
+varying	vector	temporary_7
+varying	vector	temporary_8
+varying	float	temporary_9
+varying	float	latitude
+uniform	float	temporary_10
+varying	vector	temporary_11
+varying	vector	temporary_12
+varying	vector	temporary_13
+varying	vector	temporary_14
+varying	vector	temporary_15
+uniform	vector	temporary_16
+#!Init:
+	return            
+#!Code:
+	normalize	("v=v")  temporary_0  N 
+	faceforward	("v=vv")  Nf  temporary_0  I 
+	normalize	("v=v")  temporary_0  I 
+	negv              	V temporary_0
+	vfromf            	temporary_1 .3 .3 .3
+	vuvector           surface_color temporary_1
+	movevv            	surface_opac Os
+	vufloat            surface_mag 0
+	vufloat            layer_mag 0
+	transform	("p=Sp")  PP  "shader"  P 
+	vufloat            scale 1
+	vufloat            rough .5
+	vufloat            i 0
+	forbegin          	#!Label6 #!Label7 #!Label8
+#!Label6:
+	vufloat            temporary_3 iter
+	flt               	temporary_2 i temporary_3
+	for               	temporary_2
+	vfromf            	temporary_1 seed
+	vuvector           temporary_6 temporary_1
+	vfromf            	temporary_8 scale
+	mulvv             	temporary_7 PP temporary_8
+	addvv             	temporary_0 temporary_6 temporary_7
+	noise	("f=p")  temporary_5  temporary_0 
+	vufloat            temporary_9 2
+	mulff             	temporary_4 temporary_5 temporary_9
+	vufloat            temporary_5 1
+	subff             	temporary_3 temporary_4 temporary_5
+	divff             	temporary_2 temporary_3 scale
+	addff             	layer_mag layer_mag temporary_2
+	divff             	scale scale rough
+#!Label7:
+	vufloat            temporary_2 1
+	addff             	i i temporary_2
+#!Label8:
+	forend            
+	vufloat            temporary_3 seaLevel
+	fgt               	temporary_2 layer_mag temporary_3
+	if                	temporary_2 #!Label10
+	addff             	surface_mag surface_mag layer_mag
+	normalize	("v=v")  temporary_0  PP 
+	ycomp	("f=p")  temporary_5  temporary_0 
+	abs	("f=f")  temporary_4  temporary_5 
+	vufloat            temporary_5 .5
+	mulff             	temporary_3 temporary_4 temporary_5
+	addff             	temporary_10 1 Km
+	vufloat            temporary_5 temporary_10
+	divff             	temporary_4 layer_mag temporary_5
+	addff             	latitude temporary_3 temporary_4
+	vfromf            	temporary_0 latitude
+	length	("f=v")  temporary_3  temporary_0 
+	vfromf            	temporary_1 .5 .4 .2
+	vuvector           temporary_0 temporary_1
+	vfromf            	temporary_1 .5 .4 .2
+	vuvector           temporary_6 temporary_1
+	vfromf            	temporary_1 .2 .4 0
+	vuvector           temporary_7 temporary_1
+	vfromf            	temporary_1 .1 .4 .1
+	vuvector           temporary_8 temporary_1
+	vfromf            	temporary_1 0 .5 .1
+	vuvector           temporary_11 temporary_1
+	vfromf            	temporary_1 .4 .45 .38
+	vuvector           temporary_12 temporary_1
+	vfromf            	temporary_1 .6 .57 .61
+	vuvector           temporary_13 temporary_1
+	vfromf            	temporary_1 1 1 1
+	vuvector           temporary_14 temporary_1
+	vfromf            	temporary_1 1 1 1
+	vuvector           temporary_15 temporary_1
+	spline	("c=fccccccccc")  layer_color  temporary_3  temporary_0  temporary_6  temporary_7  temporary_8  temporary_11  temporary_12  temporary_13  temporary_14  temporary_15 
+	vfromf            	temporary_16 0.08
+	mulvv             	temporary_1 specularcolor temporary_16
+	vuvector           temporary_0 temporary_1
+	vufloat            temporary_3 roughness
+	specular	("c=nvf")  temporary_6  Nf  V  temporary_3 
+	mulvv             	surface_color temporary_0 temporary_6
+#!Label10:
+	else              	#!Label9
+	vfromf            	temporary_1 .1 .2 .5
+	vuvector           temporary_0 temporary_1
+	vufloat            temporary_5 1
+	addff             	temporary_4 temporary_5 layer_mag
+	vufloat            temporary_5 seaLevel
+	subff             	temporary_3 temporary_4 temporary_5
+	vfromf            	temporary_6 temporary_3
+	mulvv             	layer_color temporary_0 temporary_6
+	vfromf            	temporary_16 0.2
+	mulvv             	temporary_1 specularcolor temporary_16
+	vuvector           temporary_0 temporary_1
+	vufloat            temporary_3 roughness
+	specular	("c=nvf")  temporary_6  Nf  V  temporary_3 
+	mulvv             	surface_color temporary_0 temporary_6
+#!Label9:
+	endif             
+	vfromf            	temporary_1 Ka
+	vuvector           temporary_8 temporary_1
+	ambient	("c=")  temporary_11 
+	mulvv             	temporary_7 temporary_8 temporary_11
+	vfromf            	temporary_1 Kd
+	vuvector           temporary_11 temporary_1
+	diffuse	("c=n")  temporary_12  Nf 
+	mulvv             	temporary_8 temporary_11 temporary_12
+	addvv             	temporary_6 temporary_7 temporary_8
+	mulvv             	temporary_0 layer_color temporary_6
+	addvv             	surface_color surface_color temporary_0
+	movevv            	Oi surface_opac
+	mulvv             	Ci surface_color surface_opac
+	return            

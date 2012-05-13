@@ -1,0 +1,52 @@
+#!version 2.2.5
+surface
+#!parameters:
+uniform	float	Ka	=	0.8
+uniform	float	Kd	=	0.7
+uniform	float	Ks	=	.2
+uniform	float	roughness	=	0.1
+uniform	color	specularcolor	=	1
+#!variables:
+varying	vector	surface_color
+varying	vector	surface_opac
+varying	vector	Nf
+varying	vector	V
+varying	vector	temporary_0
+uniform	vector	temporary_1
+varying	vector	temporary_2
+varying	vector	temporary_3
+varying	vector	temporary_4
+varying	vector	temporary_5
+varying	vector	temporary_6
+uniform	vector	temporary_7
+varying	float	temporary_8
+#!Init:
+	return            
+#!Code:
+	normalize	("v=v")  temporary_0  N 
+	faceforward	("v=vv")  Nf  temporary_0  I 
+	normalize	("v=v")  temporary_0  I 
+	negv              	V temporary_0
+	vfromf            	temporary_1 .3 .3 .3
+	vuvector           surface_color temporary_1
+	movevv            	surface_opac Os
+	vfromf            	temporary_1 Ka
+	vuvector           temporary_4 temporary_1
+	ambient	("c=")  temporary_5 
+	mulvv             	temporary_3 temporary_4 temporary_5
+	vfromf            	temporary_1 Kd
+	vuvector           temporary_5 temporary_1
+	diffuse	("c=n")  temporary_6  Nf 
+	mulvv             	temporary_4 temporary_5 temporary_6
+	addvv             	temporary_2 temporary_3 temporary_4
+	mulvv             	temporary_0 surface_color temporary_2
+	vfromf            	temporary_7 Ks
+	mulvv             	temporary_1 specularcolor temporary_7
+	vuvector           temporary_3 temporary_1
+	vufloat            temporary_8 roughness
+	specular	("c=nvf")  temporary_4  Nf  V  temporary_8 
+	mulvv             	temporary_2 temporary_3 temporary_4
+	addvv             	surface_color temporary_0 temporary_2
+	movevv            	Oi surface_opac
+	mulvv             	Ci surface_color surface_opac
+	return            
